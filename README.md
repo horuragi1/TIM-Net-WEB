@@ -1,4 +1,4 @@
-# MY_KOREAN_TIM-Net
+# MY_KOREAN_TIM-Net_SER(Speech Emotion Recognition)
 
 ![스크린샷, 2024-04-23 16-52-43](https://github.com/horuragi1/MY_KOREAN_TIM-Net/assets/102857746/a10e08d9-ad0e-41d4-8e21-996765ed0666)
 
