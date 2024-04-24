@@ -1,5 +1,9 @@
 # MY_KOREAN_TIM-Net
 
+![스크린샷, 2024-04-23 16-52-43](https://github.com/horuragi1/MY_KOREAN_TIM-Net/assets/102857746/a10e08d9-ad0e-41d4-8e21-996765ed0666)
+
+아래 언급한 데이터셋 기준으로 validation accuracy에서 최고 성능은 89% 정도로 나왔고 10-fold validation 평균 성능은 86% 정도로 나왔습니다.
+
 ![스크린샷, 2024-04-24 13-30-28](https://github.com/horuragi1/MY_KOREAN_TIM-Net/assets/102857746/21157981-100d-4ff0-99a7-6655897bfbe4)
 
 
