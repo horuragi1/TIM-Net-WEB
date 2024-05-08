@@ -91,7 +91,7 @@ CLASS_LABELS = CLASS_LABELS_dict[args.data]
 MyModel = TIMNET_Model(args=args, input_shape=input_shape, class_label=CLASS_LABELS)
 
 MyModel.create_model()
-weight_path = 'Models/IEMOCAP_46_2024-04-23_15-37-31/10-fold_weights_best_1.hdf5'
+weight_path = 'Code/Models/IEMOCAP_46_2024-04-23_15-37-31/10-fold_weights_best_1.hdf5'
 MyModel.model.load_weights(weight_path)
 
 
