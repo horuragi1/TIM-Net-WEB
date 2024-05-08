@@ -24,6 +24,10 @@ from sklearn.metrics import confusion_matrix
 import datetime
 import pandas as pd
 import copy
+import pyaudio
+import numpy as np
+import wave
+import streamlit as st
 
 from TIMNET import TIMNET
 from Model import *
@@ -84,20 +88,105 @@ CLASS_LABELS_dict = {
 
 CLASS_LABELS = CLASS_LABELS_dict[args.data]
 
-wav_path = 'wav_파일_주소_입력'
-
-return_feature = get_feature(file_path=wav_path, mean_signal_length=310000).reshape((-1, 606, 39))
-
-print('★★★★★★★★★★★★★★★★')
-print(return_feature.shape)
-print('★★★★★★★★★★★★★★★★')
-
 MyModel = TIMNET_Model(args=args, input_shape=input_shape, class_label=CLASS_LABELS)
 
 MyModel.create_model()
-weight_path = '모델_파일_주소_입력(.hdf5_형식)'
+weight_path = 'Models/IEMOCAP_46_2024-04-23_15-37-31/10-fold_weights_best_1.hdf5'
 MyModel.model.load_weights(weight_path)
 
-prediction = MyModel.model.predict(return_feature)
-print('angry     happy     neutral   sad       ')
-print(prediction)
+
+
+
+
+
+
+
+
+
+
+
+title = "TIM-Net 음성 감정 인식"
+st.title(title)
+if st.button('녹음'):
+    with st.spinner('5초간 녹음 중...'):
+        CHUNK = 1024
+        FORMAT = pyaudio.paInt16
+        CHANNELS = 2
+        RATE = 44100
+        RECORD_SECONDS = 5
+        WAVE_OUTPUT_FILENAME = "outputtt.wav"
+
+        audio = pyaudio.PyAudio()
+
+        stream = audio.open(format=FORMAT,
+                            channels=CHANNELS,
+                            rate=RATE,
+                            input=True,
+                            frames_per_buffer=CHUNK)
+
+        frames = []
+
+        for i in range(0, int(RATE / CHUNK * RECORD_SECONDS)):
+            data = stream.read(CHUNK)
+            frames.append(data)
+            
+        stream.stop_stream()
+        stream.close()
+        audio.terminate()
+
+        wf = wave.open(WAVE_OUTPUT_FILENAME, 'wb')
+        wf.setnchannels(CHANNELS)
+        wf.setsampwidth(audio.get_sample_size(FORMAT))
+        wf.setframerate(RATE)
+        wf.writeframes(b''.join(frames))
+        wf.close()
+    
+    st.success("녹음 완료!")
+        
+    with st.spinner('감정 인식 중...'):
+        wav_path = 'outputtt.wav'
+
+        return_feature = get_feature(file_path=wav_path, mean_signal_length=310000).reshape((-1, 606, 39))
+        prediction = MyModel.model.predict(return_feature)
+        #print('angry     happy     neutral   sad       ')
+        #print(prediction)
+    
+    st.write('angry happy neutral sad')
+    st.write(prediction)
+    
+    st.audio(wav_path, format='audio/wav')
+    
+    
+
+
+    
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
