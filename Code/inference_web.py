@@ -28,6 +28,8 @@ import pyaudio
 import numpy as np
 import wave
 import streamlit as st
+from st_audiorec import st_audiorec
+from audio_recorder_streamlit import audio_recorder
 
 from TIMNET import TIMNET
 from Model import *
@@ -88,74 +90,56 @@ CLASS_LABELS_dict = {
 
 CLASS_LABELS = CLASS_LABELS_dict[args.data]
 
-MyModel = TIMNET_Model(args=args, input_shape=input_shape, class_label=CLASS_LABELS)
+#@st.experimental_memo
 
-MyModel.create_model()
-weight_path = 'Code/Models/IEMOCAP_46_2024-04-23_15-37-31/10-fold_weights_best_1.hdf5'
-MyModel.model.load_weights(weight_path)
+cnt = 0
 
-
-
-
-
-
-
+def load_model_once(_args, input_shape, class_labels):
+    MyModel = TIMNET_Model(args=args, input_shape=input_shape, class_label=class_labels)
+    MyModel.create_model()
+    weight_path = 'Code/Models/IEMOCAP_46_2024-04-23_15-37-31/10-fold_weights_best_1.hdf5'
+    MyModel.model.load_weights(weight_path)
+    return MyModel
 
 
 
 
+# TIMNET 모델 로드 (한 번만 실행)
 
+if cnt == 0:
+    MyModel = load_model_once(_args=args, input_shape=input_shape, class_labels=CLASS_LABELS)
+    cnt = 1
+
+# 나머지 애플리케이션 코드 작성
+# ...
 title = "TIM-Net 음성 감정 인식"
 st.title(title)
-if st.button('녹음'):
-    with st.spinner('5초간 녹음 중...'):
-        CHUNK = 1024
-        FORMAT = pyaudio.paInt16
-        CHANNELS = 2
-        RATE = 44100
-        RECORD_SECONDS = 5
-        WAVE_OUTPUT_FILENAME = "outputtt.wav"
 
-        audio = pyaudio.PyAudio()
-
-        stream = audio.open(format=FORMAT,
-                            channels=CHANNELS,
-                            rate=RATE,
-                            input=True,
-                            frames_per_buffer=CHUNK)
-
-        frames = []
-
-        for i in range(0, int(RATE / CHUNK * RECORD_SECONDS)):
-            data = stream.read(CHUNK)
-            frames.append(data)
-            
-        stream.stop_stream()
-        stream.close()
-        audio.terminate()
-
-        wf = wave.open(WAVE_OUTPUT_FILENAME, 'wb')
-        wf.setnchannels(CHANNELS)
-        wf.setsampwidth(audio.get_sample_size(FORMAT))
-        wf.setframerate(RATE)
-        wf.writeframes(b''.join(frames))
-        wf.close()
+audio_bytes = audio_recorder(pause_threshold=2.0, sample_rate=41_000)
+if audio_bytes:
+    st.audio(audio_bytes, format="audio/wav")
     
+    # 파일 저장
+    output_path = "output.wav"
+    with open(output_path, "wb") as f:
+        f.write(audio_bytes)
+
+    st.success(f"Audio saved to {output_path}")
     st.success("녹음 완료!")
         
     with st.spinner('감정 인식 중...'):
-        wav_path = 'outputtt.wav'
+        wav_path = 'output.wav'
 
         return_feature = get_feature(file_path=wav_path, mean_signal_length=310000).reshape((-1, 606, 39))
         prediction = MyModel.model.predict(return_feature)
         #print('angry     happy     neutral   sad       ')
         #print(prediction)
-    
+
     st.write('angry happy neutral sad')
     st.write(prediction)
-    
+
     st.audio(wav_path, format='audio/wav')
-    
+
     
 
 

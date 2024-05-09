@@ -10,3 +10,5 @@ streamlit==1.30.0
 tensorflow_gpu==2.7.0
 tqdm==4.66.2
 protobuf==3.20.*
+streamlit-audiorec
+audio-recorder-streamlit
