@@ -127,18 +127,20 @@ if audio_bytes:
     st.success(f"Audio saved to {output_path}")
     st.success("녹음 완료!")
         
-    with st.spinner('감정 인식 중...'):
-        wav_path = 'output.wav'
+    if os.path.getsize(output_path):
+        
+        with st.spinner('감정 인식 중...'):
+            wav_path = 'output.wav'
 
-        return_feature = get_feature(file_path=wav_path, mean_signal_length=310000).reshape((-1, 606, 39))
-        prediction = MyModel.model.predict(return_feature)
-        #print('angry     happy     neutral   sad       ')
-        #print(prediction)
+            return_feature = get_feature(file_path=wav_path, mean_signal_length=310000).reshape((-1, 606, 39))
+            prediction = MyModel.model.predict(return_feature)
+            #print('angry     happy     neutral   sad       ')
+            #print(prediction)
 
-    st.write('angry happy neutral sad')
-    st.write(prediction)
+        st.write('angry happy neutral sad')
+        st.write(prediction)
 
-    st.audio(wav_path, format='audio/wav')
+        #st.audio(wav_path, format='audio/wav')
 
     
 
