@@ -115,7 +115,7 @@ if cnt == 0:
 title = "TIM-Net 음성 감정 인식"
 st.title(title)
 
-audio_bytes = audio_recorder(pause_threshold=2.0, sample_rate=41_000)
+audio_bytes = audio_recorder(pause_threshold=2.0, sample_rate=41_000, energy_threshold = 0)
 if audio_bytes:
     st.audio(audio_bytes, format="audio/wav")
     
