@@ -122,8 +122,7 @@ if st.button('녹음'):
                             channels=CHANNELS,
                             rate=RATE,
                             input=True,
-                            frames_per_buffer=CHUNK,
-                            input_device_index=0)
+                            frames_per_buffer=CHUNK)
 
         frames = []
 
