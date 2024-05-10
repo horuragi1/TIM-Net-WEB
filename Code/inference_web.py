@@ -169,6 +169,8 @@ else:
                 prediction = MyModel.model.predict(return_feature)
                 #print('angry     happy     neutral   sad       ')
                 #print(prediction)
+                
+            st.audio(wav_path, format='audio/wav')
 
             st.write('angry happy neutral sad')
             st.write(prediction)
