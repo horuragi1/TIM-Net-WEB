@@ -125,6 +125,8 @@ if genre == ":rainbow[마이크]":
     if audio_bytes:
         st.audio(audio_bytes, format="audio/wav")
         
+        st.write(len(audio_bytes))#imsi
+        
         # 파일 저장
         output_path = "output.wav"
         with open(output_path, "wb") as f:
