@@ -90,10 +90,7 @@ CLASS_LABELS_dict = {
 
 CLASS_LABELS = CLASS_LABELS_dict[args.data]
 
-#@st.experimental_memo
-
-
-
+@st.cache_resource
 def load_model_once(_args, input_shape, class_labels):
     MyModel = TIMNET_Model(args=args, input_shape=input_shape, class_label=class_labels)
     MyModel.create_model()
@@ -101,19 +98,8 @@ def load_model_once(_args, input_shape, class_labels):
     MyModel.model.load_weights(weight_path)
     return MyModel
 
+MyModel = load_model_once(_args=args, input_shape=input_shape, class_labels=CLASS_LABELS)
 
-
-
-# TIMNET 모델 로드 (한 번만 실행)
-
-MyModel = None 
-
-if MyModel == None:
-    print('create MyModel!!!')
-    MyModel = load_model_once(_args=args, input_shape=input_shape, class_labels=CLASS_LABELS)
-    #os.mkdir('flag123')
-    #print('mkdir!!!')
-    
 # 나머지 애플리케이션 코드 작성
 # ...
 title = "TIM-Net 음성 감정 인식"
