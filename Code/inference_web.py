@@ -115,32 +115,67 @@ if cnt == 0:
 title = "TIM-Net 음성 감정 인식"
 st.title(title)
 
-audio_bytes = audio_recorder(pause_threshold=2.0, sample_rate=41_000, energy_threshold = 0)
-if audio_bytes:
-    st.audio(audio_bytes, format="audio/wav")
+genre = st.radio(
+    "입력 모드 선택",
+    [":rainbow[마이크]", "***파일 업로드***"],
+    captions = ["마이크를 사용하여 음성을 녹음합니다.", "wav 파일을 업로드하여 감정을 분석합니다."])
+
+if genre == ":rainbow[마이크]":
+    audio_bytes = audio_recorder(pause_threshold=2.0, sample_rate=41_000, energy_threshold = 0)
+    if audio_bytes:
+        st.audio(audio_bytes, format="audio/wav")
+        
+        # 파일 저장
+        output_path = "output.wav"
+        with open(output_path, "wb") as f:
+            f.write(audio_bytes)
+
+        st.success(f"Audio saved to {output_path}")
+        st.success("녹음 완료!")
+            
+        if os.path.getsize(output_path):
+            
+            with st.spinner('감정 인식 중...'):
+                wav_path = 'output.wav'
+
+                return_feature = get_feature(file_path=wav_path, mean_signal_length=310000).reshape((-1, 606, 39))
+                prediction = MyModel.model.predict(return_feature)
+                #print('angry     happy     neutral   sad       ')
+                #print(prediction)
+
+            st.write('angry happy neutral sad')
+            st.write(prediction)
+
+            #st.audio(wav_path, format='audio/wav')
+else:
     
-    # 파일 저장
-    output_path = "output.wav"
-    with open(output_path, "wb") as f:
-        f.write(audio_bytes)
+    wav_file = st.file_uploader('음성 파일(.wav)을 업로드 하세요.', type=['wav'])
+    
+    if wav_file != None:
+        wav_file.name = 'output.wav'
+    
+        with open(wav_file.name, 'wb') as f: #해당 경로의 폴더에서 파일의 이름으로 생성하겠다.
+            f.write(wav_file.getbuffer()) # 해당 내용은 Buffer로 작성하겠다.
+                # 기본적으로 이미즈는 buffer로 저장되고 출력할때도 buffer로 출력한다.
+                
+        output_path = wav_file.name
+            
+        if os.path.getsize(output_path):
+            
+            with st.spinner('감정 인식 중...'):
+                wav_path = 'output.wav'
 
-    st.success(f"Audio saved to {output_path}")
-    st.success("녹음 완료!")
-        
-    if os.path.getsize(output_path):
-        
-        with st.spinner('감정 인식 중...'):
-            wav_path = 'output.wav'
+                return_feature = get_feature(file_path=wav_path, mean_signal_length=310000).reshape((-1, 606, 39))
+                prediction = MyModel.model.predict(return_feature)
+                #print('angry     happy     neutral   sad       ')
+                #print(prediction)
 
-            return_feature = get_feature(file_path=wav_path, mean_signal_length=310000).reshape((-1, 606, 39))
-            prediction = MyModel.model.predict(return_feature)
-            #print('angry     happy     neutral   sad       ')
-            #print(prediction)
+            st.write('angry happy neutral sad')
+            st.write(prediction)
 
-        st.write('angry happy neutral sad')
-        st.write(prediction)
+            #st.audio(wav_path, format='audio/wav')
 
-        #st.audio(wav_path, format='audio/wav')
+
 
     
 
