@@ -106,11 +106,13 @@ def load_model_once(_args, input_shape, class_labels):
 
 # TIMNET 모델 로드 (한 번만 실행)
 
-if not os.path.exists('flag'):
+MyModel = None 
+
+if MyModel == None:
+    print('create MyModel!!!')
     MyModel = load_model_once(_args=args, input_shape=input_shape, class_labels=CLASS_LABELS)
-    os.mkdir('flag')
-else:
-    abc = 1
+    #os.mkdir('flag123')
+    #print('mkdir!!!')
     
 # 나머지 애플리케이션 코드 작성
 # ...
