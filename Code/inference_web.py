@@ -122,7 +122,7 @@ genre = st.radio(
 
 if genre == ":rainbow[마이크]":
     audio_bytes = audio_recorder(pause_threshold=2.0, sample_rate=41_000, energy_threshold = 0)
-    if audio_bytes:
+    if audio_bytes and (len(audio_bytes) > 44):
         st.audio(audio_bytes, format="audio/wav")
         
         st.write(len(audio_bytes))#imsi
